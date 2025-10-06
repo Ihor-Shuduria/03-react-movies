@@ -3,12 +3,12 @@ import type { Movie } from "../../types/movie";
 import css from "./MovieModal.module.css";
 import { createPortal } from "react-dom";
 
-interface ModalProps {
+interface MovieModalProps {
   movie: Movie;
   onClose: () => void;
 }
 
-export default function MovieModal({ movie, onClose }: ModalProps) {
+export default function MovieModal({ movie, onClose }: MovieModalProps) {
   const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) {
       onClose();
@@ -47,7 +47,7 @@ export default function MovieModal({ movie, onClose }: ModalProps) {
         </button>
         <img
           src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
-          alt={"movie_title"}
+          alt={"movie.title"}
           className={css.image}
         />
         <div className={css.content}>

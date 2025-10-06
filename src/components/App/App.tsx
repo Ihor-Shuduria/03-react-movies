@@ -13,11 +13,7 @@ export default function App() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
 
   const handleSearch = async (query: string) => {
     setMovies([]);
@@ -26,10 +22,12 @@ export default function App() {
     try {
       const data = await fetchMovies(query);
       if (data.length === 0) {
+        setError(true);
         toast.error("No movies found for your request.");
       }
       setMovies(data);
     } catch (error) {
+      setError(true);
       toast.error("Something went wrong. Try again later.");
       console.error(error);
     } finally {
@@ -37,15 +35,27 @@ export default function App() {
     }
   };
 
+  const handleSearchAction = async (FormData: FormData) => {
+    const rawQuery = FormData.get("query");
+    const query = rawQuery?.toString().trim();
+    if (!query) {
+      toast.error("Please enter your search query.");
+      return;
+    }
+    await handleSearch(query);
+  };
+
   const handleSelectMovie = (movie: Movie) => {
     setSelectedMovie(movie);
-    openModal();
+  };
+  const closeModal = () => {
+    setSelectedMovie(null);
   };
 
   return (
     <div className={css.app}>
       <Toaster position="top-center" />
-      <SearchBar onSubmit={handleSearch} />
+      <SearchBar action={handleSearchAction} />
 
       {loading && <Loader />}
       {error && <ErrorMessage />}
@@ -53,7 +63,7 @@ export default function App() {
         <MovieGrid movies={movies} onSelect={handleSelectMovie} />
       )}
 
-      {isModalOpen && selectedMovie && (
+      {selectedMovie && (
         <MovieModal movie={selectedMovie} onClose={closeModal} />
       )}
     </div>
