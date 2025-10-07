@@ -35,16 +35,6 @@ export default function App() {
     }
   };
 
-  const handleSearchAction = async (FormData: FormData) => {
-    const rawQuery = FormData.get("query");
-    const query = rawQuery?.toString().trim();
-    if (!query) {
-      toast.error("Please enter your search query.");
-      return;
-    }
-    await handleSearch(query);
-  };
-
   const handleSelectMovie = (movie: Movie) => {
     setSelectedMovie(movie);
   };
@@ -55,7 +45,7 @@ export default function App() {
   return (
     <div className={css.app}>
       <Toaster position="top-center" />
-      <SearchBar action={handleSearchAction} />
+      <SearchBar onSubmit={handleSearch} />
 
       {loading && <Loader />}
       {error && <ErrorMessage />}
